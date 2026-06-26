@@ -43,16 +43,18 @@ docker compose down
 
 # Services 
 
-API: http://localhost:8080
+* API: http://localhost:8080
 
-DB: localhost:5433
+* Swagger UI: http://localhost:8080/swagger-ui/index.html
+
+* DB: localhost:5433
 
 ## Endpoints 
 
 ```
-POST /api/sleep
-GET /api/sleep/latest?userId={uuid}
-GET /api/sleep/analytics?userId={uuid}
+POST /users/{user_id}/sleep-logs
+GET /users/{user_id}/sleep-logs/latest
+GET /users/{user_id}/sleep-logs/summary
 ```
 
 # Testing
