@@ -5,11 +5,14 @@ import com.noom.sleeplogger.dto.request.CreateSleepLogRequest;
 import com.noom.sleeplogger.dto.response.SleepLogResponse;
 import com.noom.sleeplogger.dto.response.SleepSummaryResponse;
 import com.noom.sleeplogger.enums.Feeling;
+import com.noom.sleeplogger.exception.GlobalExceptionHandler;
+import com.noom.sleeplogger.exception.SleepLogNotFoundException;
 import com.noom.sleeplogger.service.SleepLogService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(SleepLogController.class)
+@Import(GlobalExceptionHandler.class)
 class SleepLogControllerTest {
 
     @Autowired
@@ -120,5 +124,17 @@ class SleepLogControllerTest {
                 .andExpect(jsonPath("$.feelingFrequency.GOOD").value(10))
                 .andExpect(jsonPath("$.feelingFrequency.OK").value(5))
                 .andExpect(jsonPath("$.feelingFrequency.BAD").value(2));
+    }
+
+    @Test
+    void shouldReturn404_whenSleepLogNotFound() throws Exception {
+
+        UUID userId = UUID.randomUUID();
+
+        when(sleepLogService.getLatestSleepLog(userId))
+                .thenThrow(new SleepLogNotFoundException("Not found"));
+
+        mockMvc.perform(get("/sleep/{userId}/latest", userId))
+                .andExpect(status().isNotFound());
     }
 }

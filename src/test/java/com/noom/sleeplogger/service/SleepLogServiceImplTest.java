@@ -4,6 +4,7 @@ import com.noom.sleeplogger.dto.request.CreateSleepLogRequest;
 import com.noom.sleeplogger.entity.SleepLog;
 import com.noom.sleeplogger.entity.User;
 import com.noom.sleeplogger.enums.Feeling;
+import com.noom.sleeplogger.exception.SleepLogNotFoundException;
 import com.noom.sleeplogger.repository.SleepLogRepository;
 import com.noom.sleeplogger.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -122,5 +123,16 @@ class SleepLogServiceImplTest {
         assertThat(result.averageTimeInBedMinutes()).isEqualTo(450);
         assertThat(result.feelingFrequency().get(Feeling.GOOD)).isEqualTo(1);
         assertThat(result.feelingFrequency().get(Feeling.OK)).isEqualTo(1);
+    }
+
+    @Test
+    void shouldThrowException_whenNoSleepLogFound() {
+        UUID userId = UUID.randomUUID();
+
+        when(sleepLogRepository.findTopByUserIdOrderBySleepDateDesc(userId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(SleepLogNotFoundException.class,
+                () -> service.getLatestSleepLog(userId));
     }
 }
