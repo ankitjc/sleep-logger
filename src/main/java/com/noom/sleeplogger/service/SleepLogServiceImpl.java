@@ -2,12 +2,14 @@ package com.noom.sleeplogger.service;
 
 import com.noom.sleeplogger.dto.request.CreateSleepLogRequest;
 import com.noom.sleeplogger.dto.response.SleepLogResponse;
+import com.noom.sleeplogger.dto.response.SleepSummaryResponse;
 import com.noom.sleeplogger.entity.SleepLog;
 import com.noom.sleeplogger.repository.SleepLogRepository;
 import com.noom.sleeplogger.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,5 +53,15 @@ public class SleepLogServiceImpl implements SleepLogService {
                 saved.getTotalTimeInBedMinutes(),
                 saved.getFeeling()
         );
+    }
+
+    @Override
+    public Optional<SleepLogResponse> getLatestSleepLog(UUID userId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public SleepSummaryResponse getLast30DaySummary(UUID userId) {
+        return null;
     }
 }
