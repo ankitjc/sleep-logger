@@ -7,7 +7,6 @@ import com.noom.sleeplogger.service.SleepLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +24,10 @@ public class SleepLogController {
             @PathVariable UUID userId,
             @RequestBody CreateSleepLogRequest request
     ) {
+        if (request.wakeTime().isBefore(request.bedTime())) {
+            throw new IllegalArgumentException("Wake time must be after bed time");
+        }
+
         return ResponseEntity.ok(
                 sleepLogService.createSleepLog(userId, request)
         );

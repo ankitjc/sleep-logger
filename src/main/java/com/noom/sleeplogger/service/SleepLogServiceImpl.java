@@ -5,6 +5,7 @@ import com.noom.sleeplogger.dto.response.SleepLogResponse;
 import com.noom.sleeplogger.dto.response.SleepSummaryResponse;
 import com.noom.sleeplogger.entity.SleepLog;
 import com.noom.sleeplogger.enums.Feeling;
+import com.noom.sleeplogger.exception.SleepLogNotFoundException;
 import com.noom.sleeplogger.repository.SleepLogRepository;
 import com.noom.sleeplogger.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class SleepLogServiceImpl implements SleepLogService {
     public SleepLogResponse getLatestSleepLog(UUID userId) {
         SleepLog log = sleepLogRepository
                 .findTopByUserIdOrderBySleepDateDesc(userId)
-                .orElseThrow(() -> new IllegalArgumentException("No sleep logs found"));
+                .orElseThrow(() -> new SleepLogNotFoundException(userId));
 
         return new SleepLogResponse(
                 log.getId(),
@@ -85,7 +86,7 @@ public class SleepLogServiceImpl implements SleepLogService {
         List<SleepLog> logs = sleepLogRepository.findLast30Days(userId, from);
 
         if (logs.isEmpty()) {
-            throw new IllegalArgumentException("No data for last 30 days");
+            throw new SleepLogNotFoundException(userId);
         }
 
         // avg time in bed
