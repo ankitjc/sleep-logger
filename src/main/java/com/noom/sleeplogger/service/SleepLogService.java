@@ -11,7 +11,7 @@ public interface SleepLogService {
 
     SleepLogResponse createSleepLog(UUID userId, CreateSleepLogRequest request);
 
-    Optional<SleepLogResponse> getLatestSleepLog(UUID userId);
+    SleepLogResponse getLatestSleepLog(UUID userId);
 
     SleepSummaryResponse getLast30DaySummary(UUID userId);
 }
