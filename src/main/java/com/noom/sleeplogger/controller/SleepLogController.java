@@ -2,6 +2,7 @@ package com.noom.sleeplogger.controller;
 
 import com.noom.sleeplogger.dto.request.CreateSleepLogRequest;
 import com.noom.sleeplogger.dto.response.SleepLogResponse;
+import com.noom.sleeplogger.dto.response.SleepSummaryResponse;
 import com.noom.sleeplogger.service.SleepLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,22 @@ public class SleepLogController {
             @PathVariable UUID userId,
             @RequestBody CreateSleepLogRequest request
     ) {
+        if (request.wakeTime().isBefore(request.bedTime())) {
+            throw new IllegalArgumentException("Wake time must be after bed time");
+        }
+
         return ResponseEntity.ok(
                 sleepLogService.createSleepLog(userId, request)
         );
+    }
+
+    @GetMapping("/latest")
+    public ResponseEntity<SleepLogResponse> latest(@PathVariable UUID userId) {
+        return ResponseEntity.ok(sleepLogService.getLatestSleepLog(userId));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<SleepSummaryResponse> summary(@PathVariable UUID userId) {
+        return ResponseEntity.ok(sleepLogService.getLast30DaySummary(userId));
     }
 }
